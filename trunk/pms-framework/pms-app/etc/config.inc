@@ -20,7 +20,7 @@ define('__COMM_LIB_DIR', realpath(__ROOT . '/../phplibs'));
  * Hush libraries paths
  * TODO : should be changed by enviornment change !!!
  */
-define('__HUSH_LIB_DIR', realpath(__ROOT . '/../ihush-lib'));
+define('__HUSH_LIB_DIR', realpath(__ROOT . '/../pms-lib'));
 
 // initialize the include path env
 set_include_path('.' . PATH_SEPARATOR . __LIB_DIR . PATH_SEPARATOR . __COMM_LIB_DIR . PATH_SEPARATOR . __HUSH_LIB_DIR . PATH_SEPARATOR . get_include_path());
