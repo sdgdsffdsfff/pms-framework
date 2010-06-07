@@ -1,0 +1,1 @@
+请从 https://hush-framework.googlecode.com/svn/trunk/hush-lib/ pms-framework-read-only 下载库文件到此目录
