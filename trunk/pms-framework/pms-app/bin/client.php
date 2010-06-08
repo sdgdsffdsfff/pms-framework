@@ -29,7 +29,7 @@ try {
 		$msg = new Pms_Message();
 		$msg->setType(Pms_Message::MSG_LEVEL_1);
 		$msg->setData("Message IN Queue : " . $client->port);
-		
+		$msg = json_encode($msg); // json format data
 		$client->sendMsg($msg);
 		$client->debugMsg();
 	}
@@ -50,7 +50,7 @@ try {
 	// show mq server stats
 	if ($action == 'stats') 
 	{
-		echo $client->getStat();
+		echo $client->getStats();
 	}
 
 	// do all messages one by one

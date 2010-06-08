@@ -66,7 +66,7 @@ class Pms_Message_Server extends Hush_Socket_Server
 	 * 
 	 * @return string
 	 */
-	public function getStat ()
+	public function getStats ()
 	{
 		ob_start();
 		system("ipcs -q");
