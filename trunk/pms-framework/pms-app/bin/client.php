@@ -32,6 +32,7 @@ try {
 		$msg = json_encode($msg); // json format data
 		$client->sendMsg($msg);
 		$client->debugMsg();
+		exit;
 	}
 	
 	// deal with messages
@@ -39,18 +40,21 @@ try {
 	{
 		$client->recvMsg();
 		$client->debugMsg();
+		exit;
+	}
+	
+	// show mq server stats
+	if ($action == 'stats') 
+	{
+		echo $client->getStats();
+		exit;
 	}
 	
 	// deal with messages
 	if ($action == 'clear') 
 	{
 		$client->clearAll();
-	}
-
-	// show mq server stats
-	if ($action == 'stats') 
-	{
-		echo $client->getStats();
+		exit;
 	}
 
 	// do all messages one by one
@@ -70,7 +74,23 @@ try {
 			// sleep for test
 //			usleep(500000);
 		}
+		exit;
 	}
+	
+	echo 
+<<<USAGE
+
+Usage: php client.php <ACTIONS>
+
+Actions:
+    send    :   Send a message to PMS Server
+    recv    :   Recv a message from PMS Server
+    doall   :   Recv all messages one by one
+    stats   :   Get PMS Server queues stats 
+    clear   :   Clear all message queues
+
+
+USAGE;
 
 } catch (Exception $e) {
 	Hush_Util::trace($e);
