@@ -32,11 +32,16 @@ class Pms_Client
 	public function __construct ($ports = array())
 	{
 		// init ports array
-		$this->ports = $ports ? $ports : Pms_Util::getServerPorts(SERVER_PORT);
+		$this->ports = $ports ? (array) $ports : Pms_Util::getServerPorts(SERVER_PORT);
+		
+		if (!is_array($this->ports)) {
+			require_once 'Pms/Message/Exception.php';
+			throw new Pms_Message_Exception('server ports must be an array');
+		}
 		
 		// get random port number
-		$key = array_rand($this->ports);
-		$this->port = $this->ports[$key];
+		srand((float) microtime() * 10000000);
+		$this->port = $this->ports[array_rand($this->ports)];
 	}
 	
 	/**

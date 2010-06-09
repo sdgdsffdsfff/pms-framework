@@ -35,6 +35,22 @@ try {
 		exit;
 	}
 	
+	// fill messages
+	if ($action == 'fill') 
+	{
+		for ($i = 0; $i < 50; $i++) {
+			$client = new Pms_Client($ports);
+			require_once 'Pms/Message.php';
+			$msg = new Pms_Message();
+			$msg->setType(Pms_Message::MSG_LEVEL_1);
+			$msg->setData("Message IN Queue : " . $client->port);
+			$msg = json_encode($msg); // json format data
+			$client->sendMsg($msg);
+			$client->debugMsg();
+		}
+		exit;
+	}
+	
 	// deal with messages
 	if ($action == 'recv') 
 	{
@@ -85,6 +101,7 @@ Usage: php client.php <ACTIONS>
 Actions:
     send    :   Send a message to PMS Server
     recv    :   Recv a message from PMS Server
+    fill    :   Fill random messages to the queues
     doall   :   Recv all messages one by one
     stats   :   Get PMS Server queues stats 
     clear   :   Clear all message queues

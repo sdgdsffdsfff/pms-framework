@@ -32,13 +32,13 @@ class Pms_Message_Handler extends Hush_Message_Handler
 		// Do action by message type
 		switch ($msg->getType()) {
 			case Pms_Message::MSG_LEVEL_1 : 
-				echo "[LEVEL 1] " . $msg->getData() . "\n";
+				echo "[Server Handler] LEVEL : 1 ; DATA : " . $msg->getData() . "\n";
 				break;
 			case Pms_Message::MSG_LEVEL_2 : 
-				echo "[LEVEL 2] " . $msg->getData() . "\n";
+				echo "[Server Handler] LEVEL : 2 ; DATA : " . $msg->getData() . "\n";
 				break;
 			case Pms_Message::MSG_LEVEL_3 : 
-				echo "[LEVEL 3] " . $msg->getData() . "\n";
+				echo "[Server Handler] LEVEL : 3 ; DATA : " . $msg->getData() . "\n";
 				break;
 			default : 
 				echo "Unknown Message\n";
