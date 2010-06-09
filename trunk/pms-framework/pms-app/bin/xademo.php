@@ -19,17 +19,26 @@ $action = $argv[1]; // passed parameter
 $ports = Pms_Util::getServerPorts(SERVER_PORT);
 
 $xa = new Pms_XA($ports);
-$xa->start();
+
+$xa->start(); // start transaction
 
 try {
 	
-	if ($action == 'back') {
-		throw new Exception("Throw Rollback Exception");
-	}
-
 	if (!$action) {
-		echo "Deal with the message : \n";
-		var_dump($xa->getMsg());
+		echo "Deal with the messages : \n";
+		// deal with messages
+		for ($i = 0; $i < 10; $i++) {
+			var_dump($xa->getMsg());
+		}
+	}
+	
+	if ($action == 'back') {
+		echo "Deal with the messages : \n";
+		// deal with messages
+		for ($i = 0; $i < 10; $i++) {
+			var_dump($xa->getMsg());
+		}
+		throw new Exception("Throw Rollback Exception");
 	}
 
 	if ($action) {
@@ -49,7 +58,10 @@ USAGE;
 	}
 
 } catch (Exception $e) {
+	
 	Hush_Util::trace($e);
-	$xa->rollback();
+	$xa->rollback(); // rollback
 	exit;
 }
+
+$xa->commit(); // commit
