@@ -97,7 +97,7 @@ class Pms_Client
 		// if mq is empty
 		if (!$client->getSize()) {
 			$ports = Pms_Util::array_remove($this->xports, $client->getPort());
-			return $this->getMsg();
+			return $client->getMsg();
 		}
 		
 		// store current client
