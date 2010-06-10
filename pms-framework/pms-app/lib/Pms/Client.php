@@ -15,16 +15,26 @@ require_once 'Pms/Message/Client.php';
  * @package Pms_Client
  */
 class Pms_Client
-{
+{	
+	/**
+	 * @var int
+	 */
+	public $port = 0;
+	
 	/**
 	 * @var array
 	 */
 	public $ports = array();
 	
 	/**
-	 * @var int
+	 * @var Pms_Message_Client
 	 */
-	public $port = 0;
+	public $xports = array();
+	
+	/**
+	 * @var Pms_Client
+	 */
+	public $client = null;
 	
 	/**
 	 * Construct
@@ -39,6 +49,23 @@ class Pms_Client
 			throw new Pms_Message_Exception('server ports must be an array');
 		}
 		
+		// init xports array ; for keeping geting msg from not empty client
+		foreach ($this->ports as $port) {
+			$client = new Pms_Message_Client(SERVER_HOST, $port);
+			if (!$client->getSize()) continue;
+			$this->xports[] = $port;
+		}
+		
+		// get random port number
+		$this->__rand();
+	}
+	
+	/**
+	 * Get random port number
+	 * @return void
+	 */
+	protected function __rand ()
+	{
 		// get random port number
 		srand((float) microtime() * 10000000);
 		$this->port = $this->ports[array_rand($this->ports)];
@@ -46,11 +73,38 @@ class Pms_Client
 	
 	/**
 	 * Magic method
+	 * @see Pms_Message_Server
 	 */
-	public function __call ($method, $params)
+	private function __call ($method, $params)
 	{
 		$client = new Pms_Message_Client(SERVER_HOST, $this->port);
 		return call_user_method_array($method, $client, $params);
+	}
+	
+	/**
+	 * Get message object
+	 * 
+	 * @return Object
+	 */
+	public function getMsg ()
+	{
+		// all queues are empty
+		if (!sizeof($this->xports)) return false;
+		
+		// get random client
+		$client = new Pms_Client($this->xports);
+		
+		// if mq is empty
+		if (!$client->getSize()) {
+			$ports = Pms_Util::array_remove($this->xports, $client->getPort());
+			return $this->getMsg();
+		}
+		
+		// store current client
+		$this->client = $client;
+		
+		// call mq server to recv msg
+		return $client->recvMsg();
 	}
 	
 	/**
@@ -84,9 +138,12 @@ class Pms_Client
 	 */
 	public function debugMsg ()
 	{
-		echo "MQ Pid : " . $this->getPid() . " ; " . 
-			 "MQ name : " . $this->getName() . " ; " .
-			 "Messages Total : " . $this->getSize() . 
+		$client = $this->client ? $this->client : $this;
+		
+		echo "[Client Debug] " .
+			 "MQ Pid : " . $client->getPid() . " ; " . 
+			 "MQ name : " . $client->getName() . " ; " .
+			 "Messages Total : " . $client->getSize() . 
 			 "\n";
 	}
 }

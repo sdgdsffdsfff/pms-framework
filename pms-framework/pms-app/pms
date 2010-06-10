@@ -1,0 +1,61 @@
+#!/bin/sh
+# -------------------------
+# PMS Server console
+# Start muti-process daemons for message queues
+#
+
+BIN_PATH="$PWD/bin"
+LOG_PATH="$PWD/log"
+DAEMON_SCRIPT=$BIN_PATH"/daemon.php"
+
+if [ ! -f "$DAEMON_SCRIPT" ]; then
+    echo "no shell"
+    exit 1
+fi
+
+ARGV="$@"
+if [ "x$ARGV" = "x" ] ; then
+    ARGS="help"
+fi
+
+for ARG in $@ $ARGS
+do
+	
+	# check environment
+	if [ ! -f "$DAEMON_SCRIPT" ]; then
+		echo -ne "Error : '$DAEMON_SCRIPT' script can not be found.\n"
+	fi
+	
+	LOG_FILE="$LOG_PATH/pms.log"
+	
+	if [ ! -f "$LOG_FILE" ]; then
+		touch $LOG_FILE; chmod +w $LOG_FILE
+	fi
+	
+	# do command
+	PID=`pgrep php$`
+	
+	case $ARG in
+	start)
+		if [ -n "$PID" ]; then
+			echo "PMS Daemon is already running."
+		else
+			nohup php $DAEMON_SCRIPT >> $LOG_FILE 2>&1 &
+		fi
+		;;
+	stop)
+		if [ ! "$PID" ]; then
+			echo "PMS Daemon is not running."
+		else
+			pgrep php | xargs kill -9
+		fi
+		;;
+	*)
+		echo "usage: $0 (start|stop|help)."
+		exit 2
+		;;
+	esac
+	
+done
+
+exit;

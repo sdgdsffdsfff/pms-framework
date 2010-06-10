@@ -19,6 +19,11 @@ require_once 'Pms/Message/Queue.php';
 class Pms_Message_Server extends Hush_Socket_Server
 {
 	/**
+	 * @var int
+	 */
+	public $port = 0;
+	
+	/**
 	 * Construct
 	 */
 	public function __construct ($host = '', $port = null)
@@ -27,6 +32,8 @@ class Pms_Message_Server extends Hush_Socket_Server
 		
 		$this->mq = new Pms_Message_Queue($port);
 		$this->mq->addHandler(new Pms_Message_Handler());
+		
+		$this->port = $port;
 	}
 	
 	/**
@@ -38,6 +45,16 @@ class Pms_Message_Server extends Hush_Socket_Server
 	public function getPid ()
 	{
 		return getmypid();
+	}
+	
+	/**
+	 * Get current port number
+	 * 
+	 * @return string
+	 */
+	public function getPort ()
+	{
+		return $this->port;
 	}
 	
 	/**

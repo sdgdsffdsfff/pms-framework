@@ -16,31 +16,61 @@ require_once 'Pms/Message/Server.php';
 class Pms_Server extends Hush_Process
 {
 	/**
+	 * @var int
+	 */
+	public $port = 0;
+	
+	/**
 	 * Construct
 	 */
 	public function __construct ($ports = array())
 	{
 		parent::__construct(); // init shared space
 		
-		// init ports array
+		// init shared ports array
 		$this->ports = $ports ? $ports : Pms_Util::getServerPorts(SERVER_PORT);
+		
+		// init max process for server
+		$this->setMaxProcess(count($ports));
 	}
 	
+	/**
+	 * Process init logic
+	 */
 	public function __init ()
 	{
+		// release resource
 		$this->__release();
+		
+		// for pms log
+		echo "Start at : " . date("Y-m-d H:i:s") . "\n";
 	}
 	
+	/**
+	 * Process main logic
+	 */
 	public function run ()
 	{
-		$ports = $this->ports;
-		$port = array_pop($ports);
-		$this->ports = $ports;
+		// init first time
+		if (!$this->port) {
+			$ports = $this->ports;
+			$this->port = array_pop($ports); // current process's port (no shared)
+			$this->ports = $ports;
+		} else {
+			echo "\n";
+		}
 		
-		echo "Listening on : " . $port . "\n";
+		echo "Listening on : " . $this->port . "\n";
 		
-		$server = new Pms_Message_Server(SERVER_HOST, $port);
-//		$server->debugMode(1);
-		$server->daemon();
+		try {
+			
+			$server = new Pms_Message_Server(SERVER_HOST, $this->port);
+			$server->daemon();
+			
+		} catch (Exception $e) {
+			Hush_Util::trace($e);
+			$server->close();
+			$this->run();
+		}
 	}
 }

@@ -13,7 +13,7 @@ require_once 'Pms/Client.php';
 /**
  * @package Pms_XA
  */
-class Pms_XA
+class Pms_XA extends Pms_Client
 {
 	/**
 	 * @var object
@@ -26,54 +26,14 @@ class Pms_XA
 	public $buf = array();
 	
 	/**
-	 * @var array
-	 */
-	public $ports = array();
-	
-	/**
-	 * @var Pms_Client
-	 */
-	public $xports = array();
-	
-	/**
-	 * Construct
-	 */
-	public function __construct ($ports)
-	{
-		// init ports array
-		$this->ports = $ports ? (array) $ports : Pms_Util::getServerPorts(SERVER_PORT);
-		
-		if (!is_array($this->ports)) {
-			require_once 'Pms/Message/Exception.php';
-			throw new Pms_Message_Exception('server ports must be an array');
-		}
-		
-		// init xports array ; for keeping geting msg from not empty client
-		foreach ($this->ports as $port) {
-			$client = new Pms_Client($port);
-			if (!$client->getSize()) continue;
-			$this->xports[] = $port;
-		}
-	}
-	
-	/**
 	 * Get message object
 	 * 
 	 * @return Object
 	 */
-	public function getMsg ()
+	public function recv ()
 	{
-		// all queues are empty
-		if (!sizeof($this->xports)) return false;
-		// get random client
-		$client = new Pms_Client($this->xports);
-		// if mq is empty
-		if (!$client->getSize()) {
-			$ports = Pms_Util::array_remove($this->xports, $client->getPort());
-			return $this->getMsg();
-		}
 		// store message
-		$this->msg = $client->recvMsg();
+		$this->msg = $this->getMsg();
 		// store in trans
 		$this->buf[] = $this->msg;
 		// return current msg
@@ -88,16 +48,6 @@ class Pms_XA
 	public function start ()
 	{
 		$this->buf = array();
-	}
-	
-	/**
-	 * Prepare actions
-	 * 
-	 * @return void
-	 */
-	public function prepare ()
-	{
-		
 	}
 	
 	/**
@@ -118,10 +68,10 @@ class Pms_XA
 	public function rollback ()
 	{
 		foreach ((array) $this->buf as $msg) {
-			// get random client
-			$client = new Pms_Client($this->ports);
+			// get random port number
+			$this->__rand();
 			// send back msg for rollback
-			$client->sendMsg($msg);
+			$this->sendMsg($msg);
 		}
 	}
 }

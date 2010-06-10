@@ -9,7 +9,8 @@
  * @version    $Id$
  */
  
-require_once '../etc/config.inc';
+// could be call by other scripts ; avoid path change
+require_once realpath(dirname(__FILE__).'/../etc') . '/config.inc';
 
 require_once 'Pms/Util.php';
 require_once 'Pms/XA.php';
@@ -28,7 +29,7 @@ try {
 		echo "Deal with the messages : \n";
 		// deal with messages
 		for ($i = 0; $i < 10; $i++) {
-			var_dump($xa->getMsg());
+			var_dump($xa->recv());
 		}
 	}
 	
@@ -36,7 +37,7 @@ try {
 		echo "Deal with the messages : \n";
 		// deal with messages
 		for ($i = 0; $i < 10; $i++) {
-			var_dump($xa->getMsg());
+			var_dump($xa->recv());
 		}
 		throw new Exception("Throw Rollback Exception");
 	}
