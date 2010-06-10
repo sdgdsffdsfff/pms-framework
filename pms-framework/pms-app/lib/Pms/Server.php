@@ -34,9 +34,11 @@ class Pms_Server extends Hush_Process
 		$this->setMaxProcess(count($ports));
 		
 		// clear pid file first
+		// do only once !!!
 		$this->__pid(false);
 		
 		// store parent process pid
+		// do only once !!!
 		$this->__pid(true);
 	}
 	
@@ -79,6 +81,9 @@ class Pms_Server extends Hush_Process
 			$ports = $this->ports;
 			$this->port = array_pop($ports); // current process's port (no shared)
 			$this->ports = $ports;
+			// store children process pid
+			// do only once !!!
+			$this->__pid(true);
 		} else {
 			echo "\n";
 		}
@@ -86,9 +91,6 @@ class Pms_Server extends Hush_Process
 		echo "Listening on : " . $this->port . "\n";
 		
 		try {
-			
-			// store children process pid
-			$this->__pid(true);
 			
 			// start socket message queue server
 			$server = new Pms_Message_Server(SERVER_HOST, $this->port);
