@@ -17,5 +17,12 @@ require_once 'Pms/Server.php';
 
 $ports = Pms_Util::getServerPorts(SERVER_PORT);
 
-$daemon = new Pms_Server($ports);
-$daemon->start();
+try {
+
+	$daemon = new Pms_Server($ports);
+	$daemon->start();
+
+} catch (Exception $e) {
+	Hush_Util::trace($e);
+	exit;
+}
