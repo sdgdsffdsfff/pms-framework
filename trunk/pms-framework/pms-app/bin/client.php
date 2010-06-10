@@ -9,7 +9,8 @@
  * @version    $Id$
  */
  
-require_once '../etc/config.inc';
+// could be call by other scripts ; avoid path change
+require_once realpath(dirname(__FILE__).'/../etc') . '/config.inc';
 
 require_once 'Pms/Util.php';
 require_once 'Pms/Client.php';
@@ -38,7 +39,7 @@ try {
 	// fill messages
 	if ($action == 'fill') 
 	{
-		for ($i = 0; $i < 50; $i++) {
+		for ($i = 0; $i < 30; $i++) {
 			$client = new Pms_Client($ports);
 			require_once 'Pms/Message.php';
 			$msg = new Pms_Message();
@@ -54,7 +55,8 @@ try {
 	// deal with messages
 	if ($action == 'recv') 
 	{
-		$client->recvMsg();
+		// do get message
+		var_dump($client->getMsg());
 		$client->debugMsg();
 		exit;
 	}
@@ -76,16 +78,9 @@ try {
 	// do all messages one by one
 	if ($action == 'doall')
 	{
-		while (sizeof($ports) > 0) {
-			// get random client
-			$client = new Pms_Client($ports);
-			// if mq is empty
-			if (!$client->getSize()) {
-				$ports = Pms_Util::array_remove($ports, $client->getPort());
-				continue;
-			}
-			// do message
-			$client->recvMsg();
+		while ($client->getSize()) {
+			// do get message
+			var_dump($client->getMsg());
 			$client->debugMsg();
 			// sleep for test
 //			usleep(500000);

@@ -9,19 +9,13 @@
  * @version    $Id$
  */
  
-require_once '../etc/config.inc';
+// could be call by other scripts ; avoid path change
+require_once realpath(dirname(__FILE__).'/../etc') . '/config.inc';
 
 require_once 'Pms/Util.php';
 require_once 'Pms/Server.php';
 
 $ports = Pms_Util::getServerPorts(SERVER_PORT);
 
-try {
-	
-	$daemon = new Pms_Server($ports);
-	$daemon->start();
-
-} catch (Exception $e) {
-	Hush_Util::trace($e);
-	exit;
-}
+$daemon = new Pms_Server($ports);
+$daemon->start();

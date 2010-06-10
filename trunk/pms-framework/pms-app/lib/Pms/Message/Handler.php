@@ -20,11 +20,12 @@ class Pms_Message_Handler extends Hush_Message_Handler
 	/**
 	 * Handler logic for deal with the messages
 	 * Do specific function by different message types 
-	 * Called by recvMsg() method for client
+	 * Called by sendMsg() method for client
+	 * 
 	 * @see Pms_Message
 	 * @return void
 	 */
-	public function handler ()
+	public function doSend ()
 	{
 		// Get message from queue
 		$msg = $this->getMessage();
@@ -32,16 +33,46 @@ class Pms_Message_Handler extends Hush_Message_Handler
 		// Do action by message type
 		switch ($msg->getType()) {
 			case Pms_Message::MSG_LEVEL_1 : 
-				echo "[Server Handler] LEVEL : 1 ; DATA : " . $msg->getData() . "\n";
+				echo "[Server doSend] LEVEL : 1 ; DATA : " . $msg->getData() . "\n";
 				break;
 			case Pms_Message::MSG_LEVEL_2 : 
-				echo "[Server Handler] LEVEL : 2 ; DATA : " . $msg->getData() . "\n";
+				echo "[Server doSend] LEVEL : 2 ; DATA : " . $msg->getData() . "\n";
 				break;
 			case Pms_Message::MSG_LEVEL_3 : 
-				echo "[Server Handler] LEVEL : 3 ; DATA : " . $msg->getData() . "\n";
+				echo "[Server doSend] LEVEL : 3 ; DATA : " . $msg->getData() . "\n";
 				break;
 			default : 
-				echo "Unknown Message\n";
+				echo "[Server doSend] Unknown Message\n";
+				break;
+		}
+	}
+	
+	/**
+	 * Handler logic for deal with the messages
+	 * Do specific function by different message types 
+	 * Called by recvMsg() method for client
+	 * 
+	 * @see Pms_Message
+	 * @return void
+	 */
+	public function doRecv ()
+	{
+		// Get message from queue
+		$msg = $this->getMessage();
+		
+		// Do action by message type
+		switch ($msg->getType()) {
+			case Pms_Message::MSG_LEVEL_1 : 
+				echo "[Server doRecv] LEVEL : 1 ; DATA : " . $msg->getData() . "\n";
+				break;
+			case Pms_Message::MSG_LEVEL_2 : 
+				echo "[Server doRecv] LEVEL : 2 ; DATA : " . $msg->getData() . "\n";
+				break;
+			case Pms_Message::MSG_LEVEL_3 : 
+				echo "[Server doRecv] LEVEL : 3 ; DATA : " . $msg->getData() . "\n";
+				break;
+			default : 
+				echo "[Server doRecv] Unknown Message\n";
 				break;
 		}
 	}
