@@ -78,12 +78,14 @@ try {
 	// do all messages one by one
 	if ($action == 'doall')
 	{
-		while ($client->getSize()) {
-			// do get message
-			var_dump($client->getMsg());
-			$client->debugMsg();
-			// sleep for test
-//			usleep(500000);
+		foreach ($ports as $port) {
+			// find in all pms mqs
+			$client = new Pms_Client($port);
+			// do get all message
+			while ($client->getSize()) {
+				var_dump($client->getMsg());
+				$client->debugMsg();
+			}
 		}
 		exit;
 	}

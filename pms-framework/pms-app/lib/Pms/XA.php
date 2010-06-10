@@ -35,7 +35,7 @@ class Pms_XA extends Pms_Client
 		// store message
 		$this->msg = $this->getMsg();
 		// store in trans
-		$this->buf[] = $this->msg;
+		if ($this->msg) $this->buf[] = $this->msg;
 		// return current msg
 		return $this->msg;
 	}
@@ -71,7 +71,7 @@ class Pms_XA extends Pms_Client
 			// get random port number
 			$this->__rand();
 			// send back msg for rollback
-			$this->sendMsg($msg);
+			if ($msg) $this->sendMsg($msg);
 		}
 	}
 }
