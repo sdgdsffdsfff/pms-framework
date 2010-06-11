@@ -12,16 +12,17 @@
 // could be call by other scripts ; avoid path change
 require_once realpath(dirname(__FILE__).'/../etc') . '/config.inc';
 
-require_once 'Pms/Util.php';
-require_once 'Pms/Client.php';
+require_once 'Pms.php';
 
-$action = $argv[1]; // passed parameter
+$action	= $argv[1]; // passed parameter
 
-$ports = Pms_Util::getServerPorts(SERVER_PORT);
+$host	= SERVER_HOST;
+$ports	= Pms_Util::getServerPorts(SERVER_PORT);
 
 try {
 	
-	$client = new Pms_Client($ports);
+	$client = new Pms();
+	$client->connect($host, $ports);
 	
 	// add messages
 	if ($action == 'send') 
@@ -29,10 +30,10 @@ try {
 		require_once 'Pms/Message.php';
 		$msg = new Pms_Message();
 		$msg->setType(Pms_Message::MSG_LEVEL_1);
-		$msg->setData("Message IN Queue : " . $client->port);
+		$msg->setData("Message IN Queue : " . $client->port());
 		$msg = json_encode($msg); // json format data
-		$client->sendMsg($msg);
-		$client->debugMsg();
+		$client->add($msg);
+		$client->debug();
 		exit;
 	}
 	
@@ -40,14 +41,14 @@ try {
 	if ($action == 'fill') 
 	{
 		for ($i = 0; $i < 30; $i++) {
-			$client = new Pms_Client($ports);
+			$client = new Pms($host, $ports);
 			require_once 'Pms/Message.php';
 			$msg = new Pms_Message();
 			$msg->setType(Pms_Message::MSG_LEVEL_1);
-			$msg->setData("Message IN Queue : " . $client->port);
+			$msg->setData("Message IN Queue : " . $client->port());
 			$msg = json_encode($msg); // json format data
-			$client->sendMsg($msg);
-			$client->debugMsg();
+			$client->add($msg);
+			$client->debug();
 		}
 		exit;
 	}
@@ -56,22 +57,22 @@ try {
 	if ($action == 'recv') 
 	{
 		// do get message
-		var_dump($client->getMsg());
-		$client->debugMsg();
+		var_dump($client->get());
+		$client->debug();
 		exit;
 	}
 	
 	// show mq server stats
 	if ($action == 'stats') 
 	{
-		echo $client->getStats();
+		echo $client->stats();
 		exit;
 	}
 	
 	// deal with messages
 	if ($action == 'clear') 
 	{
-		$client->clearAll();
+		$client->clear();
 		exit;
 	}
 
@@ -80,11 +81,11 @@ try {
 	{
 		foreach ($ports as $port) {
 			// find in all pms mqs
-			$client = new Pms_Client($port);
+			$client = new Pms($host, $port);
 			// do get all message
-			while ($client->getSize()) {
-				var_dump($client->getMsg());
-				$client->debugMsg();
+			while ($client->size()) {
+				var_dump($client->get());
+				$client->debug();
 			}
 		}
 		exit;

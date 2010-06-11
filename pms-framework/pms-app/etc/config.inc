@@ -26,11 +26,6 @@ define('__HUSH_LIB_DIR', realpath(__ROOT . '/../pms-lib'));
 set_include_path('.' . PATH_SEPARATOR . __LIB_DIR . PATH_SEPARATOR . __COMM_LIB_DIR . PATH_SEPARATOR . __HUSH_LIB_DIR . PATH_SEPARATOR . get_include_path());
 
 /**
- * Set exception default handler
- */
-set_exception_handler(create_function('$e', 'return $e->getException();'));
-
-/**
  * Global environment settings
  * TODO : should be changed by enviornment change !!!
  */
