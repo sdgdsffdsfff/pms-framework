@@ -8,12 +8,12 @@
  * @version    $Id$
  */
  
-require_once 'Hush/Message/Exception.php';
+require_once 'Pms/Exception.php';
 
 /**
  * @package Pms_Message
  */
-class Pms_Message_Exception extends Hush_Message_Exception
+class Pms_Message_Exception extends Pms_Exception
 {
 	
 }

@@ -2,8 +2,8 @@
 /**
  * PMS Framework
  *
- * @category   Pms_Server
- * @package    Pms_Server
+ * @category   Pms
+ * @package    Pms
  * @author     James.Huang <shagoo@gmail.com>
  * @version    $Id$
  */
@@ -13,8 +13,16 @@ require_once 'Hush/Process.php';
 require_once 'Pms/Util.php';
 require_once 'Pms/Message/Server.php';
 
+/**
+ * @package Pms
+ */
 class Pms_Server extends Hush_Process
 {
+	/**
+	 * @var string
+	 */
+	public $host = '';
+	
 	/**
 	 * @var int
 	 */
@@ -23,12 +31,15 @@ class Pms_Server extends Hush_Process
 	/**
 	 * Construct
 	 */
-	public function __construct ($ports = array())
+	public function __construct ($host = '', $ports = array())
 	{
 		parent::__construct(); // init shared space
 		
+		// init host address
+		$this->host = $host ? (string) $host : SERVER_HOST;
+		
 		// init shared ports array
-		$this->ports = $ports ? $ports : Pms_Util::getServerPorts(SERVER_PORT);
+		$this->ports = $ports ? (array) $ports : Pms_Util::getServerPorts(SERVER_PORT);
 		
 		// init max process for server
 		$this->setMaxProcess(count($ports));

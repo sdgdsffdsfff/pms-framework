@@ -2,8 +2,8 @@
 /**
  * PMS Framework
  *
- * @category   Pms_XA
- * @package    Pms_XA
+ * @category   Pms
+ * @package    Pms
  * @author     James.Huang <shagoo@gmail.com>
  * @version    $Id$
  */
@@ -11,7 +11,7 @@
 require_once 'Pms/Client.php';
 
 /**
- * @package Pms_XA
+ * @package Pms
  */
 class Pms_XA extends Pms_Client
 {
@@ -23,7 +23,12 @@ class Pms_XA extends Pms_Client
 	/**
 	 * @var array
 	 */
-	public $buf = array();
+	public $recv_buf = array();
+	
+	/**
+	 * @var array
+	 */
+	public $send_buf = array();
 	
 	/**
 	 * Get message object
@@ -35,9 +40,20 @@ class Pms_XA extends Pms_Client
 		// store message
 		$this->msg = $this->getMsg();
 		// store in trans
-		if ($this->msg) $this->buf[] = $this->msg;
+		if ($this->msg) $this->recv_buf[] = $this->msg;
 		// return current msg
 		return $this->msg;
+	}
+	
+	/**
+	 * Send message object
+	 * 
+	 * @return void
+	 */
+	public function send ($msg)
+	{
+		// store in trans
+		if ($msg) $this->send_buf[] = $msg;
 	}
 	
 	/**
@@ -47,7 +63,8 @@ class Pms_XA extends Pms_Client
 	 */
 	public function start ()
 	{
-		$this->buf = array();
+		$this->recv_buf = array();
+		$this->send_buf = array();
 	}
 	
 	/**
@@ -57,7 +74,14 @@ class Pms_XA extends Pms_Client
 	 */
 	public function commit ()
 	{
-		$this->buf = array();
+		$this->recv_buf = array();
+		
+		foreach ((array) $this->send_buf as $msg) {
+			// get random port number
+			$this->__rand();
+			// send back msg for rollback
+			if ($msg) $this->sendMsg($msg);
+		}
 	}
 	
 	/**
@@ -67,7 +91,9 @@ class Pms_XA extends Pms_Client
 	 */
 	public function rollback ()
 	{
-		foreach ((array) $this->buf as $msg) {
+		$this->send_buf = array();
+		
+		foreach ((array) $this->recv_buf as $msg) {
 			// get random port number
 			$this->__rand();
 			// send back msg for rollback
