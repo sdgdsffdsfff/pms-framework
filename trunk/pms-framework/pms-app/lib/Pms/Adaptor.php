@@ -10,21 +10,47 @@
  
 require_once 'Pms/Adaptor/Exception.php';
 
+/**
+ * @package Pms
+ */
 class Pms_Adaptor
 {
+	/**
+	 * @static
+	 */
 	public static $adaptor = null;
 	
+	/**
+	 * @static
+	 */
 	public static $client = null;
 	
+	/**
+	 * @static
+	 */
 	public static $server = null;
 	
+	/**
+	 * @static
+	 */
 	public static $queue = null;
 	
+	/**
+	 * Select adaptor for PMS system
+	 * 
+	 * @static
+	 */
 	public static function factory ($adaptor)
 	{
 		self::$adaptor = $adaptor;
 	}
 	
+	/**
+	 * Get PMS client by adaptor
+	 * 
+	 * @param array $config Setting option array includes host and port
+	 * @return Object
+	 */
 	public static function client ($config = array())
 	{
 		if (!self::$client) {
@@ -40,6 +66,12 @@ class Pms_Adaptor
 		return self::$client;
 	}
 	
+	/**
+	 * Get PMS server by adaptor
+	 * 
+	 * @param array $config Setting option array includes host and port
+	 * @return Object
+	 */
 	public static function server ($config = array())
 	{
 		if (!self::$server) {
@@ -55,6 +87,12 @@ class Pms_Adaptor
 		return self::$server;
 	}
 	
+	/**
+	 * Get PMS queue by adaptor
+	 * 
+	 * @param array $config Setting option array includes name (queue name)
+	 * @return Object
+	 */
 	public static function queue ($config = array())
 	{
 		if (!self::$queue) {
