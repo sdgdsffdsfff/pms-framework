@@ -11,7 +11,6 @@
 require_once 'Hush/Process.php';
 
 require_once 'Pms/Util.php';
-require_once 'Pms/Message/Server.php';
 
 /**
  * @package Pms
@@ -36,10 +35,10 @@ class Pms_Server extends Hush_Process
 		parent::__construct(); // init shared space
 		
 		// init host address
-		$this->host = $host ? (string) $host : SERVER_HOST;
+		$this->host = $host ? (string) $host : PMS_SERVER_HOST;
 		
 		// init shared ports array
-		$this->ports = $ports ? (array) $ports : Pms_Util::getServerPorts(SERVER_PORT);
+		$this->ports = $ports ? (array) $ports : Pms_Util::getServerPorts(PMS_SERVER_PORT);
 		
 		// init max process for server
 		$this->setMaxProcess(count($ports));
@@ -104,7 +103,11 @@ class Pms_Server extends Hush_Process
 		try {
 			
 			// start socket message queue server
-			$server = new Pms_Message_Server(SERVER_HOST, $this->port);
+			$server = Pms_Adaptor::server(array(
+				'host' => $this->host,
+				'port' => $this->port
+			));
+			
 			$server->daemon();
 			
 		} catch (Exception $e) {

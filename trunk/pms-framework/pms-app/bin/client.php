@@ -16,8 +16,8 @@ require_once 'Pms.php';
 
 $action	= $argv[1]; // passed parameter
 
-$host	= SERVER_HOST;
-$ports	= Pms_Util::getServerPorts(SERVER_PORT);
+$host	= PMS_SERVER_HOST;
+$ports	= Pms_Util::getServerPorts(PMS_SERVER_PORT);
 
 try {
 	

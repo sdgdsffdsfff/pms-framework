@@ -9,7 +9,6 @@
  */
 
 require_once 'Pms/Util.php';
-require_once 'Pms/Message/Client.php';
 
 /**
  * @package Pms
@@ -32,7 +31,7 @@ class Pms_Client
 	public $ports = array();
 	
 	/**
-	 * @var Pms_Message_Client
+	 * @var array
 	 */
 	public $xports = array();
 	
@@ -47,10 +46,10 @@ class Pms_Client
 	public function __construct ($host = '', $ports = array())
 	{
 		// init host address
-		$this->host = $host ? (string) $host : SERVER_HOST;
+		$this->host = $host ? (string) $host : PMS_SERVER_HOST;
 		
 		// init ports array
-		$this->ports = $ports ? (array) $ports : Pms_Util::getServerPorts(SERVER_PORT);
+		$this->ports = $ports ? (array) $ports : Pms_Util::getServerPorts(PMS_SERVER_PORT);
 		
 		if (!is_array($this->ports)) {
 			require_once 'Pms/Message/Exception.php';
@@ -59,7 +58,10 @@ class Pms_Client
 		
 		// init xports array ; for keeping geting msg from not empty client
 		foreach ($this->ports as $port) {
-			$client = new Pms_Message_Client($this->host, $port);
+			$client = Pms_Adaptor::client(array(
+				'host' => $this->host,
+				'port' => $port
+			));
 			if (!$client->getSize()) continue;
 			$this->xports[] = $port;
 		}
@@ -81,11 +83,13 @@ class Pms_Client
 	
 	/**
 	 * Magic method
-	 * @see Pms_Message_Server
 	 */
 	private function __call ($method, $params)
 	{
-		$client = new Pms_Message_Client($this->host, $this->port);
+		$client = Pms_Adaptor::client(array(
+			'host' => $this->host,
+			'port' => $this->port
+		));
 		return call_user_method_array($method, $client, $params);
 	}
 	
@@ -134,7 +138,10 @@ class Pms_Client
 	public function clearAll ()
 	{
 		foreach ($this->ports as $port) {
-			$client = new Pms_Message_Client($this->host, $port);
+			$client = Pms_Adaptor::client(array(
+				'host' => $this->host,
+				'port' => $port
+			));
 			$client->clearMq();
 		}
 	}

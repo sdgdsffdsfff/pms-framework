@@ -21,8 +21,8 @@ require_once 'Pms/Server.php';
  */
 set_exception_handler(create_function('$e', 'return $e->getException();'));
 
-$host	= SERVER_HOST;
-$ports	= Pms_Util::getServerPorts(SERVER_PORT);
+$host	= PMS_SERVER_HOST;
+$ports	= Pms_Util::getServerPorts(PMS_SERVER_PORT);
 
 try {
 

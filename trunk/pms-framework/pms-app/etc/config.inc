@@ -36,5 +36,10 @@ date_default_timezone_set('PRC');
  * PMS server host and port
  * TODO : should be changed by enviornment change !!!
  */
-define('SERVER_HOST', '127.0.0.1');
-define('SERVER_PORT', '11111-11115');
+define('PMS_SERVER_HOST', '127.0.0.1');
+define('PMS_SERVER_PORT', '11111-11115');
+
+/**
+ * Set PMS engine
+ */
+require_once 'engine.inc';
